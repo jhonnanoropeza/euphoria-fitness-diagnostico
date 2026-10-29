@@ -1,0 +1,881 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Euphoria Fitness · Diagnóstico Digital</title>
+<meta name="description" content="Auditoría de Instagram, calculadora de indicadores y proyección de ventas para Euphoria Fitness. Preparado por ODMarketing.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: banda navy de marca arriba, navegación fija por secciones, columna de lectura de 960px; colores tomados del logo de Euphoria */
+:root {
+  --navy: #052943;
+  --navy-2: #0b3a5c;
+  --orange: #f3490b;
+  --red: #de2e05;
+  --bg: #f3f5f8;
+  --surface: #ffffff;
+  --ink: #0a1d30;
+  --muted: #56657a;
+  --line: #d9e0e9;
+  --soft: #e9eef4;
+  --accent: #e8430a;
+  --accent-soft: #fde7dc;
+  --bar-static: #93a6c0;
+  --good: #16794f;
+  --good-soft: #def2e8;
+  --warn: #a8640a;
+  --warn-soft: #fbefd9;
+  --bad: #b8290f;
+  --bad-soft: #fbe2dc;
+  --on-navy: #ffffff;
+  --on-navy-muted: #a9bdd2;
+  --display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --body: "Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #03182a; --surface: #072238; --ink: #e8eef5; --muted: #95a9bf; --line: #163650; --soft: #0b2a43;
+    --accent: #ff6a2e; --accent-soft: #3a1e12; --bar-static: #4b6a8c;
+    --good: #57cf98; --good-soft: #0f3226; --warn: #f2b24f; --warn-soft: #36290e; --bad: #ff8a70; --bad-soft: #3b1710;
+    --navy-2: #0e3d61;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; }
+.gut { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.inner { max-width: 960px; margin: 0 auto; }
+h1, h2, h3 { font-family: var(--display); font-weight: 700; line-height: 1.05; margin: 0; text-wrap: balance; letter-spacing: .01em; }
+h2 { font-size: clamp(1.8rem, 4.2vw, 2.5rem); text-transform: uppercase; }
+h3 { font-size: 1.3rem; text-transform: uppercase; }
+p { margin: 0; }
+.prose { max-width: 66ch; }
+.muted { color: var(--muted); }
+.eyebrow { font-size: .76rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+
+/* Banda de marca */
+.hero { background: var(--navy); color: var(--on-navy); padding-block: 36px 40px; position: relative; overflow: hidden; }
+.hero::after { content: ""; position: absolute; right: -140px; top: -140px; width: 420px; height: 420px; border-radius: 50%; border: 3px solid var(--orange); opacity: .35; pointer-events: none; }
+.hero .inner { display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: center; position: relative; z-index: 1; }
+.hero img.logo { width: 112px; height: 112px; border-radius: 50%; display: block; box-shadow: 0 0 0 3px var(--orange); }
+.hero .eyebrow { color: var(--orange); }
+.hero h1 { font-size: clamp(2.4rem, 7vw, 4.2rem); text-transform: uppercase; }
+.hero h1 span { color: var(--orange); }
+.hero .meta { display: flex; flex-wrap: wrap; gap: 4px 20px; color: var(--on-navy-muted); font-size: .92rem; margin-top: 10px; }
+.hero .meta b { color: var(--on-navy); font-weight: 600; }
+@media (max-width: 600px) { .hero .inner { grid-template-columns: 1fr; gap: 18px; } .hero img.logo { width: 84px; height: 84px; } }
+
+/* Navegación */
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); background: var(--navy); z-index: 30; }
+nav.tabs { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--navy-2); border-bottom: 3px solid var(--orange); }
+nav.tabs .inner { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+nav.tabs a { color: var(--on-navy-muted); text-decoration: none; font-family: var(--display); font-size: 1.05rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; padding: 12px 14px; white-space: nowrap; border-bottom: 3px solid transparent; margin-bottom: -3px; }
+nav.tabs a:hover, nav.tabs a.on { color: var(--on-navy); border-bottom-color: var(--on-navy); }
+nav.tabs a:focus-visible { outline: 2px solid var(--orange); outline-offset: -2px; }
+
+main { padding-block: 40px 72px; }
+main .inner { display: grid; gap: 64px; }
+.part { display: grid; gap: 48px; scroll-margin-top: 70px; }
+.part-head { display: grid; gap: 10px; padding-bottom: 18px; border-bottom: 2px solid var(--ink); }
+.part-head h2 { font-size: clamp(2.2rem, 5.5vw, 3.2rem); }
+.part-head .num { font-family: var(--display); font-weight: 700; color: var(--accent); font-size: 1.1rem; letter-spacing: .08em; }
+section { display: grid; gap: 18px; min-width: 0; }
+section > h3 { color: var(--ink); }
+
+/* Cifras */
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.stat { background: var(--surface); padding: 16px 16px 14px; display: grid; gap: 4px; align-content: start; min-width: 0; }
+.stat .num { font-family: var(--display); font-size: 2.4rem; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.stat .lbl { font-weight: 600; font-size: .9rem; }
+.stat .sub { font-size: .8rem; color: var(--muted); line-height: 1.4; }
+.stat.alert .num { color: var(--bad); }
+@media (max-width: 720px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Etiquetas de estado */
+.chip { display: inline-block; font-size: .72rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; white-space: nowrap; line-height: 1.5; }
+.chip.good { background: var(--good-soft); color: var(--good); }
+.chip.warn { background: var(--warn-soft); color: var(--warn); }
+.chip.bad { background: var(--bad-soft); color: var(--bad); }
+.chip.neutral { background: var(--soft); color: var(--muted); }
+
+.keys { display: grid; gap: 12px; padding: 0; margin: 0; list-style: none; }
+.keys li { display: grid; grid-template-columns: 96px 1fr; gap: 12px; align-items: start; }
+.keys .chip { justify-self: start; margin-top: 3px; }
+
+/* Gráfico */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px 18px; display: grid; gap: 12px; min-width: 0; }
+.chart-scroll { overflow-x: auto; }
+.chart-scroll svg { display: block; width: 100%; min-width: 600px; height: auto; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: .85rem; color: var(--muted); }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.note { font-size: .85rem; color: var(--muted); }
+
+/* Columnas */
+.cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+@media (max-width: 720px) { .cols { grid-template-columns: 1fr; } }
+.col { display: grid; gap: 14px; align-content: start; min-width: 0; }
+.col h3 { padding-bottom: 8px; border-bottom: 2px solid var(--line); }
+.col.good h3 { color: var(--good); border-color: var(--good); }
+.col.bad h3 { color: var(--bad); border-color: var(--bad); }
+.items { display: grid; gap: 14px; padding: 0; margin: 0; list-style: none; }
+.items li { display: grid; gap: 2px; }
+.items b { font-weight: 600; }
+.items span { color: var(--muted); font-size: .94rem; }
+
+/* Checklist de ventas */
+.check { display: grid; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); overflow: hidden; }
+.check-row { display: grid; grid-template-columns: 1fr auto; gap: 6px 16px; padding: 14px 18px; border-bottom: 1px solid var(--line); align-items: start; }
+.check-row:last-child { border-bottom: 0; }
+.check-row b { font-weight: 600; }
+.check-row p { grid-column: 1 / -1; color: var(--muted); font-size: .92rem; }
+
+/* Reputación */
+.sentiment { display: flex; height: 34px; border-radius: 8px; overflow: hidden; border: 1px solid var(--line); }
+.sentiment div { display: flex; align-items: center; justify-content: center; font-size: .8rem; font-weight: 700; color: #fff; min-width: 0; white-space: nowrap; overflow: hidden; }
+.s-q { background: #56708f; }
+.s-p { background: #1d8a5a; }
+.s-n { background: #c93412; }
+.s-o { background: #c27a12; }
+.quotes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 720px) { .quotes { grid-template-columns: 1fr; } }
+.quote { border-left: 3px solid var(--bad); background: var(--surface); padding: 12px 14px; border-radius: 0 8px 8px 0; display: grid; gap: 4px; }
+.quote q { font-weight: 600; quotes: "\201C" "\201D"; }
+.quote span { font-size: .82rem; color: var(--muted); }
+.quote.q { border-left-color: #56708f; }
+
+.callout { background: var(--accent-soft); border-radius: 10px; padding: 16px 18px; display: grid; gap: 6px; }
+.callout b { color: var(--accent); }
+.ask { display: grid; gap: 8px; padding-left: 20px; margin: 0; }
+
+/* Plan */
+.recs { display: grid; padding: 0; margin: 0; list-style: none; counter-reset: rec; border-top: 1px solid var(--line); }
+.recs li { counter-increment: rec; display: grid; grid-template-columns: 52px 1fr; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+.recs li::before { content: counter(rec, decimal-leading-zero); font-family: var(--display); font-size: 1.9rem; font-weight: 700; color: var(--accent); line-height: 1; }
+.recs .body { display: grid; gap: 4px; min-width: 0; }
+.recs .when { font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.recs h4 { margin: 0; font-size: 1.05rem; font-weight: 700; }
+.recs p { color: var(--muted); }
+
+/* Tablas */
+.table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: .9rem; font-variant-numeric: tabular-nums; }
+.t-posts { min-width: 720px; }
+.t-sim { min-width: 640px; }
+th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: middle; }
+th { font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; background: var(--soft); }
+tr:last-child td { border-bottom: 0; }
+.n { text-align: right; }
+.pill { font-size: .74rem; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: var(--soft); white-space: nowrap; }
+.pill.reel { background: var(--accent-soft); color: var(--accent); }
+.er-hi { color: var(--good); font-weight: 700; }
+.er-lo { color: var(--bad); font-weight: 600; }
+.vbar { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
+.vbar i { display: block; height: 6px; border-radius: 3px; background: var(--accent); opacity: .8; }
+
+/* Calculadora */
+.calc-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+.calc-bar .btns { display: flex; gap: 8px; flex-wrap: wrap; }
+button { font: inherit; font-weight: 600; font-size: .9rem; border-radius: 8px; padding: 9px 16px; cursor: pointer; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+button.primary { background: var(--orange); border-color: var(--orange); color: #fff; }
+button:hover { filter: brightness(.96); }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+.example-flag { font-size: .85rem; font-weight: 600; color: var(--warn); background: var(--warn-soft); padding: 6px 12px; border-radius: 8px; }
+.groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 760px) { .groups { grid-template-columns: 1fr; } }
+fieldset { margin: 0; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 16px 18px 18px; display: grid; gap: 14px; min-width: 0; }
+legend { font-family: var(--display); font-weight: 700; font-size: 1.15rem; text-transform: uppercase; letter-spacing: .03em; padding: 0 6px; margin-left: -6px; }
+.field { display: grid; gap: 4px; }
+.field label { font-size: .9rem; font-weight: 600; }
+.field small { font-size: .78rem; color: var(--muted); line-height: 1.35; }
+.inp { display: flex; align-items: stretch; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); overflow: hidden; }
+.inp:focus-within { border-color: var(--orange); }
+.inp span { padding: 8px 10px; color: var(--muted); font-size: .85rem; background: var(--soft); display: flex; align-items: center; white-space: nowrap; }
+.inp input, .inp select { flex: 1; min-width: 0; border: 0; background: transparent; color: var(--ink); font: inherit; font-variant-numeric: tabular-nums; padding: 8px 10px; }
+.inp input:focus, .inp select:focus { outline: none; }
+.inp select option { color: #0a1d30; }
+
+.kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 860px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .kpis { grid-template-columns: 1fr; } }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 6px; align-content: start; min-width: 0; border-top: 4px solid var(--line); }
+.kpi.good { border-top-color: var(--good); }
+.kpi.warn { border-top-color: var(--warn); }
+.kpi.bad { border-top-color: var(--bad); }
+.kpi .top { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+.kpi .lbl { font-size: .86rem; font-weight: 600; }
+.kpi .val { font-family: var(--display); font-weight: 700; font-size: 2.1rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.kpi .val.empty { color: var(--muted); font-size: 1.6rem; }
+.kpi .hint { font-size: .8rem; color: var(--muted); line-height: 1.4; }
+.kpi.feature { background: var(--navy); border-color: var(--navy); color: #fff; grid-column: span 3; border-top-color: var(--orange); }
+.kpi.feature .hint { color: var(--on-navy-muted); }
+@media (max-width: 860px) { .kpi.feature { grid-column: span 2; } }
+@media (max-width: 520px) { .kpi.feature { grid-column: span 1; } }
+
+.proj-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+@media (max-width: 760px) { .proj-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.flags { display: grid; gap: 8px; padding: 0; margin: 0; list-style: none; }
+.flags li { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; font-size: .94rem; }
+.flags .chip { margin-top: 2px; }
+.content-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 760px) { .content-grid { grid-template-columns: 1fr; } }
+.use { display: grid; gap: 10px; padding: 0; margin: 0; list-style: none; }
+.use li { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; }
+.use li p { grid-column: 1 / -1; color: var(--muted); font-size: .92rem; }
+.use li b { font-weight: 600; }
+.assume { font-size: .82rem; color: var(--warn); font-weight: 600; }
+
+footer { border-top: 1px solid var(--line); padding-block: 22px 40px; font-size: .85rem; color: var(--muted); }
+footer .inner { display: grid; gap: 6px; }
+a { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<header class="hero gut">
+  <div class="inner">
+    <img class="logo" src="data:image/jpeg;base64,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" alt="Logo de Euphoria Fitness">
+    <div>
+      <p class="eyebrow">Diagnóstico digital · Propuesta ODMarketing</p>
+      <h1>Euphoria Fitness <span>en Instagram</span></h1>
+      <div class="meta">
+        <span><b>@euphoriafitness.vzla</b></span>
+        <span>El Oasis, Tocuyito · Carabobo</span>
+        <span>Datos al <b>29 de octubre de 2026</b></span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs gut" aria-label="Secciones">
+  <div class="inner">
+    <a href="#reporte">Reporte</a>
+    <a href="#ventas">Ventas y reputación</a>
+    <a href="#calculadora">Calculadora</a>
+    <a href="#proyeccion">Proyección</a>
+  </div>
+</nav>
+
+<main class="gut">
+<div class="inner">
+
+<!-- ======================= 1. REPORTE ======================= -->
+<div class="part" id="reporte">
+  <div class="part-head">
+    <span class="num">Parte 1</span>
+    <h2>Reporte de Instagram</h2>
+    <p class="prose muted">Euphoria Fitness abrió el 3 de octubre y en su primer mes llegó a 2,509 seguidores. Los reels funcionan y la apertura generó mucha conversación. El reto es convertir esa atención en inscripciones: hay preguntas sin responder, críticas en las publicaciones más recientes y la cuenta todavía es personal.</p>
+  </div>
+
+  <section aria-labelledby="h-cifras">
+    <h3 id="h-cifras">Las cifras</h3>
+    <div class="stats">
+      <div class="stat"><span class="num">2,509</span><span class="lbl">Seguidores</span><span class="sub">Sigue a 12 cuentas · 68 publicaciones</span></div>
+      <div class="stat"><span class="num">2.2%</span><span class="lbl">Engagement mediano</span><span class="sub">Promedio 2.8% en 11 publicaciones propias</span></div>
+      <div class="stat"><span class="num">1,213</span><span class="lbl">Vistas por reel</span><span class="sub">Promedio de 6 reels propios</span></div>
+      <div class="stat alert"><span class="num">0</span><span class="lbl">Respuestas visibles</span><span class="sub">A 19 preguntas de precio, horario o información</span></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-resumen">
+    <h3 id="h-resumen">En resumen</h3>
+    <ul class="keys prose">
+      <li><span class="chip good">Funciona</span><p><b>Los reels rinden 2.7 veces más que las fotos:</b> 3.9% de engagement promedio frente a 1.5%.</p></li>
+      <li><span class="chip good">Funciona</span><p><b>La historia vende más que el aviso.</b> El recap de la apertura logró 8.6%, el mejor del mes.</p></li>
+      <li><span class="chip bad">Crítico</span><p><b>17 personas preguntaron precio u horario en los comentarios y ninguna tiene respuesta visible.</b> La más antigua lleva 26 días esperando.</p></li>
+      <li><span class="chip bad">Crítico</span><p><b>El comentario con más likes de toda la cuenta es negativo:</b> "El Gym q murió al Nacer!!!", con 13 likes.</p></li>
+      <li><span class="chip warn">Atención</span><p><b>La cuenta es personal.</b> No tiene estadísticas, botones de contacto ni la opción de promocionar publicaciones.</p></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="h-grafico">
+    <h3 id="h-grafico">Engagement por publicación</h3>
+    <div class="card">
+      <div class="legend">
+        <span><i style="background:var(--accent)"></i>Reel</span>
+        <span><i style="background:var(--bar-static)"></i>Foto o carrusel</span>
+        <span>Engagement = (likes + comentarios) ÷ seguidores</span>
+      </div>
+      <div class="chart-scroll"><svg id="chart" viewBox="0 0 760 300" role="img" aria-label="Engagement por publicación del 3 al 28 de octubre de 2026"></svg></div>
+      <p class="note">El 9 de octubre es un reel en colaboración publicado desde la cuenta de una socia. Los reels del 27 y 28 de octubre tenían 1 y 2 días al medirlos, así que pueden seguir creciendo.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-diag">
+    <h3 id="h-diag">Diagnóstico de contenido</h3>
+    <div class="cols">
+      <div class="col good">
+        <h3>Lo que funciona</h3>
+        <ul class="items">
+          <li><b>Contar la apertura como historia</b><span>El recap "¡Tocuyito, la espera terminó!" sumó 198 likes, 18 comentarios y 2,133 vistas.</span></li>
+          <li><b>Diferenciadores locales</b><span>Planta eléctrica, wifi y estacionamiento generaron 20 comentarios (4.5%). Son ventajas reales en Tocuyito.</span></li>
+          <li><b>Contenido útil para llegar</b><span>El reel de ubicación logró 4.8% e invita a guardar y compartir.</span></li>
+          <li><b>Colaboraciones</b><span>El reel publicado por una socia tuvo 2,588 vistas, más que cualquier reel propio.</span></li>
+          <li><b>Highlights ordenados</b><span>Ubicación, Planes, Clases y Entrenadores responden lo que pregunta un cliente nuevo.</span></li>
+        </ul>
+      </div>
+      <div class="col bad">
+        <h3>Lo que frena</h3>
+        <ul class="items">
+          <li><b>Fotos con bajo rendimiento</b><span>Las 3 fotos informativas del 3 al 7 de octubre quedaron entre 0.6% y 1.4%.</span></li>
+          <li><b>Cinco palabras clave distintas en 12 días</b><span>FITNESS, UBICACION, PRECIO, XTREME y EUPHORIA COFFEE. La gente no las usa: pregunta directo.</span></li>
+          <li><b>Poca presencia de personas</b><span>Casi no aparecen entrenadores ni socios con nombre propio, aunque la bio promete comunidad.</span></li>
+          <li><b>Ritmo irregular</b><span>8 días sin publicar entre el 8 y el 16 de octubre.</span></li>
+          <li><b>Etiqueta "Contenido de IA"</b><span>Varias publicaciones la muestran. Conviene decidirlo a propósito, porque resta cercanía.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-detalle">
+    <h3 id="h-detalle">Detalle de publicaciones</h3>
+    <div class="table-scroll">
+      <table class="t-posts">
+        <thead><tr><th>Fecha</th><th>Formato</th><th>Tema</th><th class="n">Likes</th><th class="n">Coment.</th><th class="n">Vistas</th><th class="n">Engagement</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<!-- ======================= 2. VENTAS Y REPUTACIÓN ======================= -->
+<div class="part" id="ventas">
+  <div class="part-head">
+    <span class="num">Parte 2</span>
+    <h2>¿Están vendiendo por Instagram?</h2>
+    <p class="prose muted">La cuenta genera interés real: en un mes, 17 personas preguntaron cuánto cuesta, a qué hora abren o cómo llegar. El problema no es la demanda sino lo que pasa después de la pregunta. Revisamos los 34 comentarios de las 11 publicaciones propias.</p>
+  </div>
+
+  <section aria-labelledby="h-embudo">
+    <h3 id="h-embudo">El camino de venta, punto por punto</h3>
+    <div class="check">
+      <div class="check-row"><b>Llamado a la acción en cada publicación</b><span class="chip good">Sí</span><p>Todas piden comentar una palabra, tocar el link de la bio o escribir al 0422-4010733.</p></div>
+      <div class="check-row"><b>Precios publicados</b><span class="chip warn">Parcial</span><p>El reel del 22 de octubre muestra 3 planes (45, 65 y 80 €), pero generó críticas y no explica qué incluye cada uno.</p></div>
+      <div class="check-row"><b>Respuesta a preguntas en comentarios</b><span class="chip bad">No</span><p>0 respuestas visibles a 19 preguntas. En el reel del 19 de octubre, 9 personas pidieron información entre el 19 y el 29 de octubre; 7 de ellas, el precio de la mensualidad.</p></div>
+      <div class="check-row"><b>Automatización por palabra clave</b><span class="chip bad">Sin evidencia</span><p>Si existiera, la gente no seguiría preguntando lo mismo días después. Solo 1 de 9 personas usó la palabra "FITNESS" y una misma persona preguntó "Precio" dos veces.</p></div>
+      <div class="check-row"><b>Venta de suplementos</b><span class="chip bad">Sin respuesta</span><p>El reel de creatina y proteína recibió la pregunta "Que precio la creatina" y sigue sin contestar.</p></div>
+      <div class="check-row"><b>Oferta para probar el gimnasio</b><span class="chip bad">No</span><p>Alguien pidió "entrenar un día para conocer sus instalaciones". No hay pase de prueba ni clase gratis visible.</p></div>
+      <div class="check-row"><b>Publicidad pagada</b><span class="chip neutral">No detectada</span><p>No aparecen anuncios de Euphoria en la Biblioteca de Anuncios de Meta (Venezuela). Con cuenta personal tampoco pueden promocionar publicaciones desde la app.</p></div>
+      <div class="check-row"><b>Contacto directo</b><span class="chip warn">Parcial</span><p>El teléfono aparece en las descripciones, pero no hay botón de WhatsApp ni de llamada porque la cuenta es personal.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-rep">
+    <h3 id="h-rep">Reputación en comentarios</h3>
+    <div class="card">
+      <div class="sentiment" role="img" aria-label="34 comentarios: 19 preguntas, 8 positivos, 6 negativos, 1 objeción">
+        <div class="s-q" style="width:55.9%">19 preguntas</div>
+        <div class="s-p" style="width:23.5%">8 positivos</div>
+        <div class="s-n" style="width:17.6%">6 neg.</div>
+        <div class="s-o" style="width:2.9%" title="1 objeción de horario"></div>
+      </div>
+      <div class="legend">
+        <span><i class="s-q"></i>Preguntas (56%)</span>
+        <span><i class="s-p"></i>Positivos (24%)</span>
+        <span><i class="s-n"></i>Negativos (18%)</span>
+        <span><i class="s-o"></i>Objeción de horario (3%)</span>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat alert"><span class="num">29</span><span class="lbl">Likes en comentarios negativos</span><span class="sub">Contra 9 likes en los positivos</span></div>
+      <div class="stat alert"><span class="num">13</span><span class="lbl">Likes del comentario más popular</span><span class="sub">"El Gym q murió al Nacer!!!"</span></div>
+      <div class="stat"><span class="num">6</span><span class="lbl">Comentarios negativos</span><span class="sub">Todos entre el 22 y el 27 de octubre</span></div>
+      <div class="stat"><span class="num">6</span><span class="lbl">Comentarios sobre el horario</span><span class="sub">4 preguntas y 2 quejas</span></div>
+    </div>
+    <div class="quotes">
+      <div class="quote"><q>El Gym q murió al Nacer!!!</q><span>Reel de precios, 22 oct · 13 likes</span></div>
+      <div class="quote"><q>Un Gym tan completo con unos planes tan Absurdo</q><span>Reel de precios, 22 oct · 7 likes</span></div>
+      <div class="quote"><q>Ese horario de 9 a 5 absurdo</q><span>Reel de precios, 22 oct · 7 likes</span></div>
+      <div class="quote"><q>Lo único que pueden pagar .. las clases de spinning, el resto de planes con el gimnasio vacio</q><span>Reel de Xtreme Bike, 27 oct</span></div>
+      <div class="quote q"><q>Fui a su gran inauguración pero no me pude inscribir porque mi horario de trabajo no me da…</q><span>Recap de apertura, 6 oct · objeción de horario</span></div>
+      <div class="quote q"><q>Puedo entrenar un día para conocer sus instalaciones?</q><span>Reel de diferenciadores, 20 oct · sin respuesta</span></div>
+    </div>
+    <div class="callout prose">
+      <p><b>Lectura:</b> la reputación todavía se puede recuperar. Las críticas se concentran en dos temas que el gimnasio controla, precio y horario, y aparecieron en una sola semana. Sin respuesta de la marca, los comentarios negativos son lo primero que ve un cliente nuevo cuando busca los precios.</p>
+    </div>
+    <p class="note">Instagram cuenta más comentarios de los que muestra públicamente (por ejemplo, 20 en el reel del 19 de octubre y 12 visibles). La diferencia pueden ser respuestas o comentarios ocultos; conviene confirmarlo con el equipo.</p>
+  </section>
+
+  <section aria-labelledby="h-preg">
+    <h3 id="h-preg">Preguntas para la reunión</h3>
+    <ol class="ask prose">
+      <li>¿Quién responde los comentarios y mensajes directos, y en cuánto tiempo?</li>
+      <li>¿Tienen alguna automatización (ManyChat u otra) para las palabras clave?</li>
+      <li>¿Cuál es el horario real y por qué ese horario? ¿Hay planes de ampliarlo?</li>
+      <li>¿De dónde vienen la mayoría de los clientes que ya tienen?</li>
+      <li>¿Han invertido en publicidad? ¿Desde qué cuenta y con qué resultados?</li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="h-plan">
+    <h3 id="h-plan">Plan de 30 días</h3>
+    <ol class="recs">
+      <li><div class="body"><span class="when">Hoy</span><h4>Responder las 19 preguntas pendientes</h4><p>Responder en público con un mensaje corto y pasar la conversación a WhatsApp. Cada pregunta sin responder es un cliente que se fue a otro gimnasio.</p></div></li>
+      <li><div class="body"><span class="when">Esta semana</span><h4>Cambiar a cuenta profesional (Empresa)</h4><p>Es gratis. Activa estadísticas, botones de WhatsApp y llamada, y la opción de promocionar publicaciones.</p></div></li>
+      <li><div class="body"><span class="when">Esta semana</span><h4>Contestar las críticas de precio y horario</h4><p>Responder con calma, explicar qué incluye cada plan y aclarar la moneda. Si el horario va a cambiar, anunciarlo.</p></div></li>
+      <li><div class="body"><span class="when">Semanas 1–2</span><h4>Una sola palabra clave con respuesta automática</h4><p>Por ejemplo "EUPHORIA", conectada a un mensaje con planes, horario, ubicación y WhatsApp, más una respuesta pública automática.</p></div></li>
+      <li><div class="body"><span class="when">Semanas 1–2</span><h4>Crear un pase de prueba</h4><p>Un día o una clase de Xtreme Bike gratis para quien venga desde Instagram. Baja la barrera del precio y permite medir.</p></div></li>
+      <li><div class="body"><span class="when">Semanas 1–4</span><h4>Cuatro reels por semana con personas</h4><p>Entrenadores, socios contando su progreso, clases reales y colaboraciones. Dejar las fotos para carruseles informativos.</p></div></li>
+    </ol>
+  </section>
+</div>
+
+<!-- ======================= 3. CALCULADORA ======================= -->
+<div class="part" id="calculadora">
+  <div class="part-head">
+    <span class="num">Parte 3</span>
+    <h2>Calculadora: situación actual</h2>
+    <p class="prose muted">Completa los datos que el gimnasio comparta en la reunión. Todos los montos son en dólares y por mes. Los indicadores se calculan al escribir; si falta un dato, el indicador indica cuál.</p>
+  </div>
+
+  <div class="calc-bar">
+    <span class="example-flag" id="exampleFlag">Mostrando valores de ejemplo. Reemplázalos con los datos del gimnasio.</span>
+    <div class="btns">
+      <button type="button" id="btnClear" class="primary">Empezar en blanco</button>
+      <button type="button" id="btnExample">Cargar ejemplo</button>
+    </div>
+  </div>
+
+  <form id="calc" class="groups" autocomplete="off" novalidate>
+    <fieldset>
+      <legend>Inversión</legend>
+      <div class="field"><label for="mk_total">Inversión total en marketing al mes</label><div class="inp"><span>US$</span><input id="mk_total" inputmode="decimal"></div><small>Pauta, diseñador, community manager, fotos, todo junto.</small></div>
+      <div class="field"><label for="ad_spend">De eso, ¿cuánto es pauta publicitaria?</label><div class="inp"><span>US$</span><input id="ad_spend" inputmode="decimal"></div></div>
+      <div class="field"><label for="cpr_reported">Costo por resultado que reporta Meta (si lo saben)</label><div class="inp"><span>US$</span><input id="cpr_reported" inputmode="decimal"></div><small>Opcional. Se compara con el costo por lead calculado.</small></div>
+      <div class="field"><label for="content_hours">Horas a la semana dedicadas a crear contenido</label><div class="inp"><span>horas</span><input id="content_hours" inputmode="decimal"></div></div>
+      <div class="field"><label for="hour_value">Valor de una hora de ese trabajo</label><div class="inp"><span>US$</span><input id="hour_value" inputmode="decimal"></div><small>Para valorar el tiempo interno. Si nadie cobra, usa lo que costaría contratarlo.</small></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Resultados</legend>
+      <div class="field"><label for="ad_leads">Personas que preguntaron por la pauta</label><div class="inp"><span>personas</span><input id="ad_leads" inputmode="numeric"></div><small>Mensajes o consultas que llegaron por anuncios, en el mes.</small></div>
+      <div class="field"><label for="ad_clients">Clientes que se inscribieron por la pauta</label><div class="inp"><span>clientes</span><input id="ad_clients" inputmode="numeric"></div></div>
+      <div class="field"><label for="ig_leads">Personas que preguntaron por Instagram (sin pauta)</label><div class="inp"><span>personas</span><input id="ig_leads" inputmode="numeric"></div><small>Comentarios y mensajes directos orgánicos del mes.</small></div>
+      <div class="field"><label for="ig_clients">Clientes que llegaron por Instagram (sin pauta)</label><div class="inp"><span>clientes</span><input id="ig_clients" inputmode="numeric"></div></div>
+      <div class="field"><label for="unanswered">Preguntas sin responder en comentarios</label><div class="inp"><span>personas</span><input id="unanswered" inputmode="numeric"></div><small>La auditoría encontró 17 personas en octubre.</small></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Negocio</legend>
+      <div class="field"><label for="ticket">Ticket promedio (mensualidad promedio)</label><div class="inp"><span>US$</span><input id="ticket" inputmode="decimal"></div><small>Planes publicados: 45, 65 y 80 €.</small></div>
+      <div class="field"><label for="active_clients">Clientes activos hoy</label><div class="inp"><span>clientes</span><input id="active_clients" inputmode="numeric"></div></div>
+      <div class="field"><label for="new_clients">Clientes nuevos en el último mes (todos los canales)</label><div class="inp"><span>clientes</span><input id="new_clients" inputmode="numeric"></div></div>
+      <div class="field"><label for="tenure">¿Cuántos meses se queda un cliente en promedio?</label><div class="inp"><span>meses</span><input id="tenure" inputmode="decimal"></div><small>Si es muy pronto para saberlo, una estimación de 4 a 6 meses es razonable en gimnasios.</small></div>
+      <div class="field"><label for="main_source">¿De dónde vienen la mayoría de los clientes?</label><div class="inp"><select id="main_source">
+        <option value="">Sin respuesta</option>
+        <option>Recomendación de otros clientes</option>
+        <option>Instagram orgánico</option>
+        <option>Publicidad pagada</option>
+        <option>Pasan por la zona</option>
+        <option>Alianzas y eventos</option>
+        <option>Otro</option>
+      </select></div></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Lectura rápida</legend>
+      <div id="quickRead" class="field" aria-live="polite"></div>
+    </fieldset>
+  </form>
+
+  <section aria-labelledby="h-ind">
+    <h3 id="h-ind">Indicadores</h3>
+    <div class="kpis" id="kpis" aria-live="polite"></div>
+    <p class="note">Las referencias de estado (sano, ajustado, crítico) son orientativas para gimnasios pequeños y sirven para ordenar la conversación, no como norma.</p>
+  </section>
+</div>
+
+<!-- ======================= 4. PROYECCIÓN ======================= -->
+<div class="part" id="proyeccion">
+  <div class="part-head">
+    <span class="num">Parte 4</span>
+    <h2>Proyección: ¿cómo llegar a la meta?</h2>
+    <p class="prose muted">Con la meta de ventas del gimnasio y los indicadores de arriba, calculamos cuántos clientes nuevos hacen falta cada mes, cuánto invertir en pauta, cuánto contenido producir y qué costo de adquisición esperar. Cuando falta un dato real, usamos un supuesto conservador y lo marcamos.</p>
+  </div>
+
+  <form id="proj" class="groups" autocomplete="off" novalidate>
+    <fieldset>
+      <legend>Meta</legend>
+      <div class="field"><label for="goal_revenue">Facturación mensual que quieren alcanzar</label><div class="inp"><span>US$</span><input id="goal_revenue" inputmode="decimal"></div></div>
+      <div class="field"><label for="horizon">¿En cuántos meses?</label><div class="inp"><span>meses</span><input id="horizon" inputmode="numeric"></div></div>
+    </fieldset>
+    <fieldset>
+      <legend>Supuestos (opcionales)</legend>
+      <div class="field"><label for="ad_share">% de clientes nuevos que vendrán por pauta</label><div class="inp"><span>%</span><input id="ad_share" inputmode="decimal"></div><small>El resto viene de Instagram orgánico, recomendaciones y la zona. Por defecto 60%.</small></div>
+      <div class="field"><label for="exp_conv">Conversión esperada de consulta a cliente</label><div class="inp"><span>%</span><input id="exp_conv" inputmode="decimal"></div><small>Vacío = la conversión actual de la pauta, o 15% si no la hay.</small></div>
+      <div class="field"><label for="exp_cpl">Costo por consulta esperado</label><div class="inp"><span>US$</span><input id="exp_cpl" inputmode="decimal"></div><small>Vacío = el costo actual, o US$1.50 si no hay datos.</small></div>
+      <div class="field"><label for="churn">Bajas al mes</label><div class="inp"><span>%</span><input id="churn" inputmode="decimal"></div><small>Vacío = se calcula con los meses de permanencia.</small></div>
+    </fieldset>
+  </form>
+
+  <section aria-labelledby="h-proj">
+    <h3 id="h-proj">Resultado</h3>
+    <div id="projOut" aria-live="polite"></div>
+  </section>
+
+  <section aria-labelledby="h-use">
+    <h3 id="h-use">Contenidos que hay que aprovechar para vender</h3>
+    <ul class="use">
+      <li><b>Diferenciadores: planta eléctrica, wifi, estacionamiento</b><span class="chip good">Anuncio de conversión</span><p>4.5% de engagement y 20 comentarios, casi todos preguntando el precio. Es el mejor reel para pauta con objetivo de mensajes.</p></li>
+      <li><b>Cómo llegar a Euphoria</b><span class="chip good">Anuncio local</span><p>4.8% de engagement. Funciona como anuncio para personas a pocos kilómetros de El Oasis.</p></li>
+      <li><b>Recap de la apertura</b><span class="chip good">Anuncio de marca</span><p>8.6% de engagement y 2,133 vistas. Muestra ambiente y gente real; sirve para que nuevos públicos conozcan el gimnasio.</p></li>
+      <li><b>Reels con socios y aliados</b><span class="chip good">Anuncio en colaboración</span><p>El reel de una socia tuvo 2,588 vistas. Repetir con testimonios y con CrosstrainingRF, y promocionarlos como anuncios de colaboración.</p></li>
+      <li><b>Clase de Xtreme Bike</b><span class="chip warn">Por producir</span><p>Un comentario dice que el spinning es lo único que la gente puede pagar: es la puerta de entrada más accesible. Grabar una clase real, con música y gente, y ofrecerla como pase de prueba.</p></li>
+      <li><b>Precios</b><span class="chip bad">Rehacer</span><p>No volver a pautar el reel actual. Primero explicar qué incluye cada plan y ofrecer el pase de prueba, y después mostrar el precio.</p></li>
+    </ul>
+  </section>
+</div>
+
+</div>
+</main>
+
+<footer class="gut">
+  <div class="inner">
+    <p><b>Fuentes:</b> perfil público de @euphoriafitness.vzla y comentarios de 11 publicaciones propias, extraídos con Apify el 29 de octubre de 2026; Biblioteca de Anuncios de Meta, consultada el mismo día.</p>
+    <p><b>Límites:</b> al ser cuenta personal no hay datos de alcance, guardados, historias ni mensajes directos. Las vistas solo existen para reels. Los comentarios se citan sin identificar a sus autores.</p>
+    <p>Preparado por ODMarketing.</p>
+  </div>
+</footer>
+
+<script>
+/* ---------- Datos de la auditoría ---------- */
+const FOLLOWERS = 2509;
+const POSTS = [
+  { d: "3 oct", t: "Foto", tema: "Inauguración: “¡Hoy es el día!”", l: 55, c: 1, v: null },
+  { d: "3 oct", t: "Foto", tema: "Masterclass de apertura con CrosstrainingRF", l: 35, c: 0, v: null },
+  { d: "6 oct", t: "Reel", tema: "Recap de la apertura: “la espera terminó”", l: 198, c: 18, v: 2133 },
+  { d: "6 oct", t: "Foto", tema: "Clases funcionales con CrosstrainingRF", l: 16, c: 0, v: null },
+  { d: "7 oct", t: "Foto", tema: "Consejos para tu primer día", l: 18, c: 0, v: null },
+  { d: "8 oct", t: "Carrusel", tema: "Instalaciones y equipos", l: 59, c: 2, v: null },
+  { d: "9 oct", t: "Reel colab", tema: "Reel de una socia en colaboración", l: 119, c: 6, v: 2588 },
+  { d: "16 oct", t: "Reel", tema: "Cómo llegar y estacionamiento", l: 119, c: 1, v: 1427 },
+  { d: "19 oct", t: "Reel", tema: "Planta eléctrica, wifi, máquinas nuevas", l: 94, c: 20, v: 1185 },
+  { d: "22 oct", t: "Reel", tema: "Precios de los planes", l: 72, c: 9, v: 1448 },
+  { d: "27 oct", t: "Reel", tema: "Humor: Xtreme Bike, expectativa vs. realidad", l: 29, c: 3, v: 766 },
+  { d: "28 oct", t: "Reel", tema: "Creatina vs. proteína (suplementos)", l: 29, c: 1, v: 319 },
+].map(p => ({ ...p, er: (p.l + p.c) / FOLLOWERS * 100, reel: p.t.startsWith("Reel") }));
+
+const $ = id => document.getElementById(id);
+const nf0 = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
+const nf1 = new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 });
+const money = (n, dec) => n == null ? "—" : "$" + new Intl.NumberFormat("en-US", { minimumFractionDigits: dec ?? (Math.abs(n) < 100 ? 2 : 0), maximumFractionDigits: dec ?? (Math.abs(n) < 100 ? 2 : 0) }).format(n);
+const pct = (n, dec = 1) => n == null ? "—" : (n * 100).toFixed(dec) + "%";
+const esc = s => String(s).replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+
+/* ---------- Gráfico ---------- */
+(function drawChart() {
+  const svg = $("chart");
+  const W = 760, H = 300, L = 44, R = 10, T = 26, B = 46, max = 10;
+  const plotH = H - T - B, step = (W - L - R) / POSTS.length, bw = step * 0.62;
+  const y = v => T + plotH - (v / max) * plotH;
+  let out = "";
+  for (let g = 0; g <= max; g += 2) {
+    out += `<line x1="${L}" x2="${W - R}" y1="${y(g)}" y2="${y(g)}" stroke="var(--line)"/>`;
+    out += `<text x="${L - 8}" y="${y(g) + 4}" text-anchor="end" font-size="11" fill="var(--muted)">${g}%</text>`;
+  }
+  out += `<line x1="${L}" x2="${W - R}" y1="${y(2.23)}" y2="${y(2.23)}" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="5 4" opacity=".6"/>`;
+  out += `<text x="${W - R}" y="${y(2.23) - 6}" text-anchor="end" font-size="11" font-weight="600" fill="var(--ink)">Mediana 2.2%</text>`;
+  POSTS.forEach((p, i) => {
+    const x = L + i * step + (step - bw) / 2;
+    const fill = p.reel ? "var(--accent)" : "var(--bar-static)";
+    const op = p.t === "Reel colab" ? ' fill-opacity="0.5"' : "";
+    out += `<rect x="${x}" y="${y(p.er)}" width="${bw}" height="${y(0) - y(p.er)}" rx="3" fill="${fill}"${op}><title>${p.d} · ${esc(p.tema)}: ${p.er.toFixed(1)}%</title></rect>`;
+    out += `<text x="${x + bw / 2}" y="${y(p.er) - 6}" text-anchor="middle" font-size="11" font-weight="600" fill="var(--ink)">${p.er.toFixed(1)}%</text>`;
+    out += `<text x="${x + bw / 2}" y="${H - B + 18}" text-anchor="middle" font-size="11" fill="var(--muted)">${p.d}</text>`;
+    if (p.t === "Reel colab") out += `<text x="${x + bw / 2}" y="${H - B + 33}" text-anchor="middle" font-size="10" fill="var(--muted)">colab</text>`;
+  });
+  svg.innerHTML = out;
+})();
+
+/* ---------- Tabla de publicaciones ---------- */
+(function fillTable() {
+  const maxV = Math.max(...POSTS.map(p => p.v || 0));
+  $("rows").innerHTML = POSTS.slice().reverse().map(p => {
+    const erCls = p.er >= 4 ? "er-hi" : p.er < 1 ? "er-lo" : "";
+    const views = p.v ? `<span class="vbar"><i style="width:${Math.round(p.v / maxV * 60)}px"></i>${nf0.format(p.v)}</span>` : "—";
+    return `<tr><td>${p.d}</td><td><span class="pill${p.reel ? " reel" : ""}">${p.t}</span></td><td>${esc(p.tema)}</td><td class="n">${p.l}</td><td class="n">${p.c}</td><td class="n">${views}</td><td class="n ${erCls}">${p.er.toFixed(1)}%</td></tr>`;
+  }).join("");
+})();
+
+/* ---------- Calculadora ---------- */
+const FIELDS = ["mk_total", "ad_spend", "cpr_reported", "content_hours", "hour_value", "ad_leads", "ad_clients", "ig_leads", "ig_clients", "unanswered", "ticket", "active_clients", "new_clients", "tenure", "main_source", "goal_revenue", "horizon", "ad_share", "exp_conv", "exp_cpl", "churn"];
+const EXAMPLE = { mk_total: 300, ad_spend: 150, cpr_reported: "", content_hours: 6, hour_value: 5, ad_leads: 120, ad_clients: 12, ig_leads: 40, ig_clients: 8, unanswered: 17, ticket: 55, active_clients: 180, new_clients: 30, tenure: 6, main_source: "Recomendación de otros clientes", goal_revenue: 15000, horizon: 6, ad_share: 60, exp_conv: "", exp_cpl: "", churn: "" };
+const BLANK = Object.fromEntries(FIELDS.map(f => [f, ""]));
+BLANK.unanswered = 17;
+const STORE_KEY = "euphoria-calc-v1";
+const WEEKS = 4.33;
+
+function num(id) {
+  const raw = String($(id).value).trim().replace(/\s/g, "").replace(",", ".");
+  if (raw === "") return null;
+  const x = parseFloat(raw);
+  return Number.isFinite(x) && x >= 0 ? x : null;
+}
+const div = (a, b) => (a != null && b != null && b > 0) ? a / b : null;
+
+function setValues(obj) { FIELDS.forEach(f => { $(f).value = obj[f] ?? ""; }); }
+function getValues() { return Object.fromEntries(FIELDS.map(f => [f, $(f).value])); }
+function save(isExample) { try { localStorage.setItem(STORE_KEY, JSON.stringify({ values: getValues(), example: isExample })); } catch (e) {} }
+function load() { try { return JSON.parse(localStorage.getItem(STORE_KEY)); } catch (e) { return null; } }
+
+let showingExample = true;
+function setExampleFlag(on) { showingExample = on; $("exampleFlag").hidden = !on; }
+
+function compute() {
+  const d = {};
+  ["mk_total", "ad_spend", "cpr_reported", "content_hours", "hour_value", "ad_leads", "ad_clients", "ig_leads", "ig_clients", "unanswered", "ticket", "active_clients", "new_clients", "tenure"].forEach(k => d[k] = num(k));
+  const r = {};
+  r.contentCost = (d.content_hours != null && d.hour_value != null) ? d.content_hours * WEEKS * d.hour_value : null;
+  r.otherSpend = (d.mk_total != null && d.ad_spend != null) ? Math.max(0, d.mk_total - d.ad_spend) : null;
+  r.organicCost = (r.contentCost == null && r.otherSpend == null) ? null : (r.contentCost || 0) + (r.otherSpend || 0);
+  r.cpl = div(d.ad_spend, d.ad_leads);
+  r.convAd = div(d.ad_clients, d.ad_leads);
+  r.cacAd = div(d.ad_spend, d.ad_clients);
+  r.convIg = div(d.ig_clients, d.ig_leads);
+  r.cacIg = div(r.organicCost, d.ig_clients);
+  const chan = (d.ad_clients || 0) + (d.ig_clients || 0);
+  r.newTotal = d.new_clients != null ? d.new_clients : (chan > 0 ? chan : null);
+  const spendBase = d.mk_total != null ? d.mk_total : d.ad_spend;
+  r.totalSpend = (spendBase == null && r.contentCost == null) ? null : (spendBase || 0) + (r.contentCost || 0);
+  r.cacTotal = div(r.totalSpend, r.newTotal);
+  r.revenue = (d.active_clients != null && d.ticket != null) ? d.active_clients * d.ticket : null;
+  r.mkPct = div(d.mk_total, r.revenue);
+  r.ltv = (d.ticket != null && d.tenure != null) ? d.ticket * d.tenure : null;
+  r.ltvCac = div(r.ltv, r.cacTotal);
+  r.roasAd = (d.ad_clients != null && d.ticket != null) ? div(d.ad_clients * d.ticket, d.ad_spend) : null;
+  r.roasAdLtv = (d.ad_clients != null && r.ltv != null) ? div(d.ad_clients * r.ltv, d.ad_spend) : null;
+  r.igShare = d.new_clients ? (chan > 0 ? chan / d.new_clients : null) : null;
+  r.hoursPerClient = (d.content_hours != null && d.ig_clients) ? d.content_hours * WEEKS / d.ig_clients : null;
+  const lossConv = r.convIg ?? r.convAd ?? 0.2;
+  r.lossConvAssumed = r.convIg == null && r.convAd == null;
+  r.lostClients = d.unanswered != null ? d.unanswered * lossConv : null;
+  r.lostRevenue = (r.lostClients != null && d.ticket != null) ? r.lostClients * d.ticket : null;
+  r.lostLtv = (r.lostClients != null && r.ltv != null) ? r.lostClients * r.ltv : null;
+  return { d, r };
+}
+
+function band(v, good, warn, higherIsBetter = true) {
+  if (v == null) return "";
+  if (higherIsBetter) return v >= good ? "good" : v >= warn ? "warn" : "bad";
+  return v <= good ? "good" : v <= warn ? "warn" : "bad";
+}
+const STATUS_TXT = { good: "Sano", warn: "Ajustado", bad: "Crítico", "": "" };
+
+function kpi({ label, value, status = "", hint, missing, feature }) {
+  const empty = value == null || value === "—";
+  const chip = status ? `<span class="chip ${status}">${STATUS_TXT[status]}</span>` : "";
+  return `<div class="kpi ${feature ? "feature " : ""}${empty ? "" : status}">
+    <div class="top"><span class="lbl">${label}</span>${empty ? "" : chip}</div>
+    <span class="val${empty ? " empty" : ""}">${empty ? "—" : value}</span>
+    <span class="hint">${empty ? "Falta: " + missing : hint}</span>
+  </div>`;
+}
+
+function renderCalc() {
+  const { d, r } = compute();
+  const cplVsReported = (r.cpl != null && d.cpr_reported != null) ? ` Meta reporta ${money(d.cpr_reported)}.` : "";
+  const cards = [
+    { feature: true, label: "Ingreso en juego por preguntas sin responder",
+      value: r.lostRevenue != null ? `${money(r.lostRevenue, 0)} al mes` : null,
+      hint: r.lostClients != null ? `${nf0.format(d.unanswered)} preguntas × ${pct(r.convIg ?? r.convAd ?? 0.2, 0)} de conversión${r.lossConvAssumed ? " (supuesto)" : ""} ≈ ${nf1.format(r.lostClients)} clientes.${r.lostLtv != null ? " En toda su permanencia valen " + money(r.lostLtv, 0) + "." : ""}` : "",
+      missing: "preguntas sin responder y ticket promedio" },
+    { label: "Costo por consulta (pauta)", value: r.cpl != null ? money(r.cpl) : (d.cpr_reported != null ? money(d.cpr_reported) : null),
+      status: "", hint: r.cpl != null ? `Lo que cuesta que una persona pregunte.${cplVsReported}` : "Dato reportado por Meta; falta contarlo contra consultas reales.",
+      missing: "inversión en pauta y personas que preguntaron" },
+    { label: "Conversión de consulta a cliente (pauta)", value: r.convAd != null ? pct(r.convAd) : null,
+      status: band(r.convAd, 0.2, 0.1), hint: "De cada 100 personas que preguntan, cuántas se inscriben. Referencia: 20% o más es sano.",
+      missing: "personas que preguntaron y clientes por pauta" },
+    { label: "Costo de adquisición por pauta (CAC)", value: r.cacAd != null ? money(r.cacAd) : null,
+      status: d.ticket != null && r.cacAd != null ? band(r.cacAd, d.ticket, d.ticket * 2, false) : "",
+      hint: d.ticket != null ? `Sano si es menor a una mensualidad (${money(d.ticket)}).` : "Lo que cuesta en pauta conseguir un cliente.",
+      missing: "inversión en pauta y clientes por pauta" },
+    { label: "Conversión en Instagram orgánico", value: r.convIg != null ? pct(r.convIg) : null,
+      status: band(r.convIg, 0.2, 0.1), hint: "De quienes preguntan por Instagram sin pauta, cuántos se inscriben.",
+      missing: "personas que preguntaron y clientes por Instagram" },
+    { label: "Costo de adquisición por Instagram orgánico", value: r.cacIg != null ? money(r.cacIg) : null,
+      status: d.ticket != null && r.cacIg != null ? band(r.cacIg, d.ticket, d.ticket * 2, false) : "",
+      hint: r.organicCost != null ? `Tiempo de contenido (${money(r.contentCost || 0, 0)}) más gastos sin pauta (${money(r.otherSpend || 0, 0)}), dividido entre clientes orgánicos.` : "",
+      missing: "horas de contenido, valor de la hora y clientes por Instagram" },
+    { label: "Costo de adquisición total (CAC)", value: r.cacTotal != null ? money(r.cacTotal) : null,
+      status: d.ticket != null && r.cacTotal != null ? band(r.cacTotal, d.ticket, d.ticket * 2, false) : "",
+      hint: `Todo el marketing más el tiempo de contenido (${money(r.totalSpend, 0)}) entre ${nf0.format(r.newTotal || 0)} clientes nuevos.`,
+      missing: "inversión total y clientes nuevos del mes" },
+    { label: "Valor de un cliente (LTV)", value: r.ltv != null ? money(r.ltv, 0) : null,
+      status: "", hint: "Ticket promedio × meses que se queda.", missing: "ticket y meses de permanencia" },
+    { label: "Relación valor / costo (LTV:CAC)", value: r.ltvCac != null ? nf1.format(r.ltvCac) + " : 1" : null,
+      status: band(r.ltvCac, 3, 1), hint: "Cuántos dólares deja un cliente por cada dólar invertido en conseguirlo. 3:1 o más es sano; menos de 1:1 pierde dinero.",
+      missing: "ticket, permanencia, inversión y clientes nuevos" },
+    { label: "Retorno de la pauta (primer mes)", value: r.roasAd != null ? nf1.format(r.roasAd) + "x" : null,
+      status: band(r.roasAd, 1, 0.5), hint: r.roasAdLtv != null ? `Con la permanencia completa: ${nf1.format(r.roasAdLtv)}x.` : "Ingreso del primer mes de los clientes de pauta ÷ inversión.",
+      missing: "clientes por pauta, ticket e inversión en pauta" },
+    { label: "Marketing como % de la facturación", value: r.mkPct != null ? pct(r.mkPct) : null,
+      status: r.mkPct == null ? "" : (r.mkPct < 0.03 ? "warn" : r.mkPct <= 0.12 ? "good" : r.mkPct <= 0.2 ? "warn" : "bad"),
+      hint: r.revenue != null ? `Facturación estimada: ${money(r.revenue, 0)} al mes. Referencia: entre 5% y 12%.` : "",
+      missing: "inversión total, clientes activos y ticket" },
+    { label: "Clientes nuevos que llegan por Instagram", value: r.igShare != null ? pct(Math.min(r.igShare, 1), 0) : null,
+      status: "", hint: "Pauta más orgánico, sobre el total de clientes nuevos del mes.",
+      missing: "clientes nuevos del mes y clientes por pauta o Instagram" },
+  ];
+  $("kpis").innerHTML = cards.map(kpi).join("");
+
+  const qr = [];
+  const src = $("main_source").value;
+  if (src) qr.push(`La mayoría de los clientes llega por <b>${esc(src.toLowerCase())}</b>.`);
+  if (r.revenue != null) qr.push(`Facturación estimada: <b>${money(r.revenue, 0)}</b> al mes.`);
+  if (r.ltvCac != null) qr.push(r.ltvCac >= 3 ? "Cada cliente deja bastante más de lo que cuesta conseguirlo: hay espacio para invertir más." : r.ltvCac >= 1 ? "Conseguir clientes es rentable, pero con poco margen." : "Hoy cuesta más conseguir un cliente de lo que deja.");
+  if (r.convAd != null && r.convAd < 0.1) qr.push("La conversión es baja: antes de invertir más, hay que mejorar la atención de las consultas.");
+  if (r.lostRevenue != null) qr.push(`Las preguntas sin responder equivalen a unos <b>${money(r.lostRevenue, 0)}</b> al mes.`);
+  $("quickRead").innerHTML = qr.length ? qr.map(t => `<p>${t}</p>`).join("") : `<p class="muted">Completa los datos para ver la lectura rápida.</p>`;
+
+  renderProjection(d, r);
+}
+
+/* ---------- Proyección ---------- */
+function renderProjection(d, r) {
+  const out = $("projOut");
+  const goal = num("goal_revenue"), horizon = Math.round(num("horizon") || 0);
+  const missing = [];
+  if (d.ticket == null) missing.push("ticket promedio");
+  if (d.active_clients == null) missing.push("clientes activos");
+  if (goal == null) missing.push("meta de facturación");
+  if (!horizon) missing.push("plazo en meses");
+  if (missing.length) {
+    out.innerHTML = `<div class="card"><p class="muted">Para proyectar falta: <b>${missing.join(", ")}</b>.</p></div>`;
+    return;
+  }
+  const assumptions = [];
+  const sharePct = num("ad_share"); const share = Math.min(1, (sharePct ?? 60) / 100);
+  if (sharePct == null) assumptions.push("60% de clientes por pauta");
+  let conv = num("exp_conv"); conv = conv != null ? conv / 100 : r.convAd;
+  if (conv == null || conv <= 0) { conv = 0.15; assumptions.push("15% de conversión"); }
+  let cpl = num("exp_cpl"); cpl = cpl != null ? cpl : (r.cpl ?? d.cpr_reported);
+  if (cpl == null) { cpl = 1.5; assumptions.push("US$1.50 por consulta"); }
+  let churn = num("churn"); churn = churn != null ? churn / 100 : (d.tenure ? 1 / d.tenure : null);
+  if (churn == null) { churn = 0.12; assumptions.push("12% de bajas al mes"); }
+  churn = Math.min(churn, 0.6);
+
+  const need = Math.ceil(goal / d.ticket);
+  const start = d.active_clients;
+  const gap = Math.max(0, need - start);
+  const rows = [];
+  let a = start, totalBudget = 0, totalNew = 0;
+  for (let m = 1; m <= horizon; m++) {
+    const target = start + gap * m / horizon;
+    const lost = Math.round(a * churn);
+    const nuevos = Math.max(0, Math.ceil(target - (a - lost)));
+    a = a - lost + nuevos;
+    const adClients = nuevos * share;
+    const leads = adClients / conv;
+    const budget = leads * cpl;
+    totalBudget += budget; totalNew += nuevos;
+    rows.push({ m, lost, nuevos, adClients, orgClients: nuevos - adClients, leads, budget, active: a, rev: a * d.ticket });
+  }
+  const avgNew = totalNew / horizon, avgBudget = totalBudget / horizon;
+  const avgAdClients = avgNew * share, avgOrg = avgNew - avgAdClients;
+  const avgLeads = avgAdClients / conv;
+  // Contenido necesario
+  const creatives = Math.min(20, Math.max(4, Math.ceil(avgBudget / 75)));
+  const reels = avgOrg > 20 ? 16 : 12;
+  const stories = 26;
+  const hoursNeeded = reels * 2.5 + creatives * 1.5 + stories * 0.25;
+  const hoursNow = d.content_hours != null ? d.content_hours * WEEKS : null;
+  let hourValue = d.hour_value;
+  if (hourValue == null) { hourValue = 5; assumptions.push("US$5 por hora de contenido"); }
+  const contentCostProj = hoursNeeded * hourValue;
+
+  // Costos proyectados: pauta + producción de contenido + otros gastos actuales sin pauta
+  const mkProj = avgBudget + contentCostProj + (r.otherSpend || 0);
+  const cacAdProj = cpl / conv;
+  const cacTotalProj = avgNew > 0 ? mkProj / avgNew : null;
+  const ltv = r.ltv ?? (d.ticket / churn);
+  const ltvCacProj = cacTotalProj ? ltv / cacTotalProj : null;
+  const budgetPct = avgBudget / goal;
+  const conv2 = Math.min(conv * 1.5, 0.35);
+  const budget2 = avgBudget * conv / conv2;
+  const lastRev = rows[rows.length - 1].rev;
+
+  // Señales de realismo
+  const flags = [];
+  if (gap === 0) flags.push(["good", "Con los clientes actuales ya alcanzan la meta. La proyección solo cubre reponer las bajas."]);
+  const growth = d.new_clients ? avgNew / d.new_clients : null;
+  if (growth != null) {
+    if (growth > 3) flags.push(["bad", `Necesitan ${nf1.format(growth)} veces los clientes nuevos que consiguen hoy. Es muy agresivo: conviene ampliar el plazo o bajar la meta.`]);
+    else if (growth > 1.5) flags.push(["warn", `Necesitan ${nf1.format(growth)} veces los clientes nuevos de hoy. Es exigente pero posible con pauta constante y buena atención.`]);
+    else flags.push(["good", `El ritmo de clientes nuevos (${nf0.format(avgNew)} al mes) es cercano al actual. Es una meta realista.`]);
+  }
+  const mkPctProj = mkProj / goal;
+  flags.push([mkPctProj > 0.2 ? "bad" : mkPctProj > 0.12 ? "warn" : "good", `El marketing completo (pauta, contenido y otros gastos) sería ${pct(mkPctProj, 0)} de la meta de facturación.`]);
+  if (budgetPct > 0.15) flags.push(["bad", `La pauta sería ${pct(budgetPct, 0)} de la meta de facturación. Es demasiado; primero hay que subir la conversión.`]);
+  else if (budgetPct > 0.08) flags.push(["warn", `La pauta sería ${pct(budgetPct, 0)} de la meta de facturación. Es alto pero manejable.`]);
+  else flags.push(["good", `La pauta sería ${pct(budgetPct, 0)} de la meta de facturación. Es un nivel razonable.`]);
+  if (conv < 0.1) flags.push(["bad", `Con ${pct(conv, 0)} de conversión, la mayor parte del dinero se pierde en consultas que no se cierran. Lo primero es responder rápido y tener un pase de prueba.`]);
+  if (ltvCacProj != null) flags.push(ltvCacProj >= 3 ? ["good", `Cada cliente nuevo dejaría ${nf1.format(ltvCacProj)} veces lo que cuesta conseguirlo.`] : ltvCacProj >= 1 ? ["warn", `La relación valor/costo sería ${nf1.format(ltvCacProj)}:1. Es rentable con poco margen.`] : ["bad", `La relación valor/costo sería ${nf1.format(ltvCacProj)}:1. Así se pierde dinero por cada cliente.`]);
+  if (hoursNow != null && hoursNeeded > hoursNow * 1.5) flags.push(["warn", `Producir este contenido toma unas ${nf0.format(hoursNeeded)} horas al mes, frente a ${nf0.format(hoursNow)} horas actuales. Hace falta apoyo externo.`]);
+
+  const sumCell = (num, lbl, sub, cls = "") => `<div class="stat ${cls}"><span class="num">${num}</span><span class="lbl">${lbl}</span><span class="sub">${sub}</span></div>`;
+
+  out.innerHTML = `
+    <div style="display:grid;gap:18px">
+      <div class="proj-summary">
+        ${sumCell(nf0.format(need), "Clientes activos necesarios", `Hoy: ${nf0.format(start)}. Faltan ${nf0.format(gap)}.`)}
+        ${sumCell(nf0.format(Math.round(avgNew)), "Clientes nuevos al mes", `${nf0.format(Math.round(avgAdClients))} por pauta y ${nf0.format(Math.round(avgOrg))} por otros canales`)}
+        ${sumCell(money(avgBudget, 0), "Pauta mensual promedio", `${money(totalBudget, 0)} en ${horizon} meses · ${nf0.format(Math.round(avgLeads))} consultas al mes`)}
+        ${sumCell(cacTotalProj != null ? money(cacTotalProj) : "—", "CAC total proyectado", `Marketing total ${money(mkProj, 0)} al mes, con ${money(contentCostProj, 0)} de contenido. Solo pauta: ${money(cacAdProj)} por cliente`)}
+      </div>
+      ${assumptions.length ? `<p class="assume">Supuestos usados por falta de datos: ${assumptions.join(" · ")}.</p>` : ""}
+
+      <div class="card">
+        <h3>¿Es realista?</h3>
+        <ul class="flags">${flags.map(([s, t]) => `<li><span class="chip ${s}">${STATUS_TXT[s]}</span><span>${t}</span></li>`).join("")}</ul>
+      </div>
+
+      <div class="callout">
+        <p><b>Si responden rápido:</b> con una conversión de ${pct(conv2, 0)} en vez de ${pct(conv, 0)}, la misma meta necesitaría ${money(budget2, 0)} de pauta al mes en lugar de ${money(avgBudget, 0)}. Es un ahorro de ${money(avgBudget - budget2, 0)} al mes, solo por atender bien las consultas.</p>
+      </div>
+
+      <div class="content-grid">
+        ${sumCell(creatives, "Creativos para pauta al mes", "Regla práctica: 1 creativo nuevo por cada US$75 de pauta, mínimo 4")}
+        ${sumCell(reels, "Reels orgánicos al mes", `${reels / 4} por semana, con personas y clases reales`)}
+        ${sumCell(stories, "Historias al mes", `Una al día. Total estimado: ${nf0.format(hoursNeeded)} horas de producción${hoursNow != null ? ` (hoy: ${nf0.format(hoursNow)})` : ""}`)}
+      </div>
+
+      <div class="table-scroll">
+        <table class="t-sim">
+          <thead><tr><th>Mes</th><th class="n">Bajas</th><th class="n">Nuevos</th><th class="n">Por pauta</th><th class="n">Consultas</th><th class="n">Pauta</th><th class="n">Activos</th><th class="n">Facturación</th></tr></thead>
+          <tbody>${rows.map(x => `<tr><td>Mes ${x.m}</td><td class="n">${nf0.format(x.lost)}</td><td class="n">${nf0.format(x.nuevos)}</td><td class="n">${nf0.format(Math.round(x.adClients))}</td><td class="n">${nf0.format(Math.round(x.leads))}</td><td class="n">${money(x.budget, 0)}</td><td class="n">${nf0.format(x.active)}</td><td class="n">${money(x.rev, 0)}</td></tr>`).join("")}</tbody>
+        </table>
+      </div>
+      <p class="note">Facturación del último mes: ${money(lastRev, 0)} (meta ${money(goal, 0)}). Bajas al mes: ${pct(churn, 0)}. Conversión: ${pct(conv, 0)}. Costo por consulta: ${money(cpl)}.</p>
+    </div>`;
+}
+
+/* ---------- Eventos ---------- */
+function onInput() { if (showingExample) setExampleFlag(false); save(false); renderCalc(); }
+document.querySelectorAll("#calc input, #calc select, #proj input").forEach(el => {
+  el.addEventListener("input", onInput);
+  el.addEventListener("change", onInput);
+});
+["calc", "proj"].forEach(id => $(id).addEventListener("submit", e => e.preventDefault()));
+$("btnClear").addEventListener("click", () => { setValues(BLANK); setExampleFlag(false); save(false); renderCalc(); $("mk_total").focus(); });
+$("btnExample").addEventListener("click", () => { setValues(EXAMPLE); setExampleFlag(true); save(true); renderCalc(); });
+
+const saved = load();
+if (saved && saved.values) { setValues(saved.values); setExampleFlag(!!saved.example); }
+else { setValues(EXAMPLE); setExampleFlag(true); }
+renderCalc();
+
+/* Pestaña activa al hacer scroll */
+const tabs = [...document.querySelectorAll("nav.tabs a")];
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) tabs.forEach(t => t.classList.toggle("on", t.getAttribute("href") === "#" + e.target.id)); });
+}, { rootMargin: "-40% 0px -55% 0px" });
+document.querySelectorAll(".part").forEach(p => io.observe(p));
+</script>
+</body>
+</html>
